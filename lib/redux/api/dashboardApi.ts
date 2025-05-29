@@ -1,31 +1,41 @@
 import { apiSlice } from "./apiSlice"
 
 export interface User {
-  _id: string
-  firstName: string
-  lastName: string
-  email: string
-  referralCode: string
-  points: number
-  freeTrialExpiresAt: string
-  subscriptionPlan: string
-  subscriptionStatus: string
-  subscriptionType?: string
-  isAdmin: boolean
-  isVerified: boolean
-  createdAt: string
-  updatedAt: string
-  address?: string
-  mobileNumber?: string
-  emailVerificationToken?: string
-  emailVerificationExpires?: string
-  emailOTP?: string
-  emailOTPExpires?: string
-  role: string
-  isDeleted: boolean
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  referralCode: string;
+  points: number;
+  freeTrialExpiresAt: string;
+  subscriptionPlan: string;
+  subscriptionStatus: string;
+  subscriptionType?: string;
+  isAdmin: boolean;
+  isVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+  address?: string;
+  mobileNumber?: string;
+  emailVerificationToken?: string;
+  emailVerificationExpires?: string;
+  emailOTP?: string;
+  emailOTPExpires?: string;
+  role: string;
+  isDeleted: boolean;
+  referralEnabled?: boolean;
+  referredBy?: string | null;
+  passwordResetExpires?: string; 
+  passwordResetToken?: string; 
+  amount?: number;
+  paymentId?: string;
+  paymentNumber?: string;
+  paymentProvider?: string;
+  subscriptionExpiresAt?: string;
+  transactionId?: string;
 }
 
-export interface DashboardData {
+ export interface DashboardData {
   totalUsers: number
   totalFreeTrial: number
   totalPremium: number
@@ -34,21 +44,23 @@ export interface DashboardData {
 }
 
 export interface Withdrawal {
-  _id: string
+  _id: string;
   user: {
-    _id: string
-    firstName: string
-    lastName: string
-    email: string
-    points: number
-  }
-  points: number
-  paymentProvider: string
-  paymentNumber: string
-  status: string
-  requestDate: string
-  createdAt: string
-  updatedAt: string
+    _id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    points: number;
+  };
+  points: number;
+  paymentProvider: string;
+  paymentNumber: string;
+  status: "pending" | "approved" | "rejected";
+  requestDate: string;
+  createdAt: string;
+  updatedAt: string;
+  admin?: string;
+  processedDate?: string;
 }
 
 export interface WithdrawalResponse {
@@ -57,25 +69,32 @@ export interface WithdrawalResponse {
 
 // New interfaces for payment approvals
 export interface PaymentApproval {
-  _id: string
-  firstName: string
-  lastName: string
-  email: string
-  password: string
-  role: string
-  isVerified: boolean
-  emailVerificationToken: string
-  emailVerificationExpires: string
-  referralCode: string
-  points: number
-  subscriptionPlan: string
-  subscriptionStatus: string
-  subscriptionType?: string
-  freeTrialExpiresAt: string
-  isDeleted: boolean
-  createdAt: string
-  updatedAt: string
-  __v: number
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: string;
+  isVerified: boolean;
+  emailVerificationToken: string;
+  emailVerificationExpires: string;
+  referralCode: string;
+  points: number;
+  subscriptionPlan: string;
+  subscriptionStatus: string;
+  subscriptionType?: string;
+  freeTrialExpiresAt: string;
+  isDeleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+  referralEnabled?: boolean;
+  referredBy?: string;
+  amount?: number;
+  paymentId?: string;
+  paymentNumber?: string;
+  paymentProvider?: string;
+  subscriptionExpiresAt?: string;
+  transactionId?: string;
 }
 
 export interface PaymentApprovalResponse {
@@ -85,18 +104,18 @@ export interface PaymentApprovalResponse {
 export const dashboardApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getDashboardData: builder.query<DashboardData, void>({
-      query: () => "/admin/dashboard",
+      query: () => "/api/v1/admin/dashboard",
       providesTags: ["Dashboard", "Users"],
     }),
 
     getWithdrawals: builder.query<WithdrawalResponse, void>({
-      query: () => "/admin/withdrawal",
+      query: () => "/api/v1/admin/withdrawalslist",
       providesTags: ["Withdrawals"],
     }),
 
     approveWithdrawal: builder.mutation<{ message: string }, string>({
       query: (id) => ({
-        url: `/admin/withdrawal/${id}/approve`,
+        url: `/api/v1/admin/withdrawals/${id}/approve`,
         method: "PATCH",
       }),
       invalidatesTags: ["Withdrawals"],
@@ -104,7 +123,7 @@ export const dashboardApi = apiSlice.injectEndpoints({
 
     rejectWithdrawal: builder.mutation<{ message: string }, string>({
       query: (id) => ({
-        url: `/admin/withdrawal/${id}/reject`,
+        url: `/api/v1/admin/withdrawals/${id}/reject`,
         method: "PATCH",
       }),
       invalidatesTags: ["Withdrawals"],
@@ -112,18 +131,18 @@ export const dashboardApi = apiSlice.injectEndpoints({
 
     // New payment approval endpoints
     getPendingPayments: builder.query<PaymentApprovalResponse, void>({
-      query: () => "/admin/withdrawal/pendingpay",
+      query: () => "/api/v1/admin/pendingpay",
       providesTags: ["PendingPayments"],
     }),
 
     getAllApprovedPayments: builder.query<PaymentApprovalResponse, void>({
-      query: () => "/admin/withdrawal/allapprovedpay",
+      query: () => "/api/v1/admin/allapprovedpay",
       providesTags: ["ApprovedPayments"],
     }),
 
     approveSubscriptionPayment: builder.mutation<{ message: string }, string>({
       query: (id) => ({
-        url: `/admin/withdrawal/${id}/approve-subscription`,
+        url: `/api/v1/admin/${id}/approve-subscription`,
         method: "PATCH",
       }),
       invalidatesTags: ["PendingPayments", "ApprovedPayments"],

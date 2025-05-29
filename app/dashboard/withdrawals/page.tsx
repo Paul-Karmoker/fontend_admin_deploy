@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Card, CardContent } from "@/components/ui/card"
+import { useState } from "react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,77 +10,115 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useToast } from "@/components/ui/use-toast"
-import { CheckCircle, XCircle, Clock, Search, MoreHorizontal, Download, RefreshCw, AlertCircle } from "lucide-react"
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/components/ui/use-toast";
+import {
+  CheckCircle,
+  XCircle,
+  Clock,
+  Search,
+  MoreHorizontal,
+  Download,
+  RefreshCw,
+  AlertCircle,
+} from "lucide-react";
 import {
   useGetWithdrawalsQuery,
   useApproveWithdrawalMutation,
   useRejectWithdrawalMutation,
-} from "@/lib/redux/api/dashboardApi"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+} from "@/lib/redux/api/dashboardApi";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
+// Define interfaces based on the updated structure
+export interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  points: number;
+}
+
+export interface Withdrawal {
+  _id: string;
+  user: User;
+  points: number;
+  paymentProvider: string;
+  paymentNumber: string;
+  status: "pending" | "approved" | "rejected";
+  requestDate: string;
+  createdAt: string;
+  updatedAt: string;
+  admin?: string;
+  processedDate?: string;
+}
+
+export interface WithdrawalResponse {
+  withdrawals: Withdrawal[];
+}
 
 export default function WithdrawalsPage() {
-  const { data, isLoading, isError, refetch } = useGetWithdrawalsQuery()
-  const [approveWithdrawal] = useApproveWithdrawalMutation()
-  const [rejectWithdrawal] = useRejectWithdrawalMutation()
-  const { toast } = useToast()
+  const { data, isLoading, isError, refetch } = useGetWithdrawalsQuery();
+  const [approveWithdrawal] = useApproveWithdrawalMutation();
+  const [rejectWithdrawal] = useRejectWithdrawalMutation();
+  const { toast } = useToast();
 
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const handleApprove = async (id: string) => {
     try {
-      await approveWithdrawal(id).unwrap()
+      await approveWithdrawal(id).unwrap();
       toast({
         title: "Withdrawal Approved",
         description: "The withdrawal request has been approved successfully.",
-      })
+      });
+      refetch();
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
         description: "Failed to approve withdrawal. Please try again.",
-      })
+      });
     }
-  }
+  };
 
   const handleReject = async (id: string) => {
     try {
-      await rejectWithdrawal(id).unwrap()
+      await rejectWithdrawal(id).unwrap();
       toast({
         title: "Withdrawal Rejected",
         description: "The withdrawal request has been rejected.",
-      })
+      });
+      refetch();
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
         description: "Failed to reject withdrawal. Please try again.",
-      })
+      });
     }
-  }
+  };
 
-  // Filter withdrawals based on search term and status
   const filteredWithdrawals =
-    data?.withdrawals.filter((withdrawal) => {
+    data?.withdrawals.filter((withdrawal: Withdrawal) => {
+      const fullName = `${withdrawal.user.firstName} ${withdrawal.user.lastName}`.toLowerCase();
       const matchesSearch =
-        withdrawal.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        withdrawal.amount.toString().includes(searchTerm) ||
-        withdrawal.id.toLowerCase().includes(searchTerm.toLowerCase())
+        fullName.includes(searchTerm.toLowerCase()) ||
+        withdrawal.points.toString().includes(searchTerm) || // Changed 'amount' to 'points'
+        withdrawal._id.toLowerCase().includes(searchTerm.toLowerCase());
 
-      if (statusFilter === "all") return matchesSearch
-      return matchesSearch && withdrawal.status === statusFilter
-    }) || []
+      if (statusFilter === "all") return matchesSearch;
+      return matchesSearch && withdrawal.status === statusFilter;
+    }) || [];
 
-  const pendingCount = data?.withdrawals.filter((w) => w.status === "pending").length || 0
-  const approvedCount = data?.withdrawals.filter((w) => w.status === "approved").length || 0
-  const rejectedCount = data?.withdrawals.filter((w) => w.status === "rejected").length || 0
+  const pendingCount = data?.withdrawals.filter((w: Withdrawal) => w.status === "pending").length || 0;
+  const approvedCount = data?.withdrawals.filter((w: Withdrawal) => w.status === "approved").length || 0;
+  const rejectedCount = data?.withdrawals.filter((w: Withdrawal) => w.status === "rejected").length || 0;
 
   if (isError) {
     return (
@@ -95,15 +133,15 @@ export default function WithdrawalsPage() {
           </Button>
         </AlertDescription>
       </Alert>
-    )
+    );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-6 bg-white rounded-lg shadow-sm">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Withdrawal Requests</h2>
-          <p className="text-muted-foreground">Manage and process user withdrawal requests</p>
+          <h2 className="text-2xl font-semibold text-gray-900">Withdrawal Requests</h2>
+          <p className="text-sm text-gray-500">Manage and process user withdrawal requests</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={() => refetch()}>
@@ -119,46 +157,38 @@ export default function WithdrawalsPage() {
 
       <Tabs defaultValue="all" className="w-full" onValueChange={setStatusFilter}>
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-          <TabsList className="grid w-full sm:w-auto grid-cols-4 mb-4 sm:mb-0">
-            <TabsTrigger value="all">
+          <TabsList className="grid w-full sm:w-auto grid-cols-4 bg-gray-100 p-1 rounded-lg">
+            <TabsTrigger value="all" className="data-[state=active]:bg-white data-[state=active]:text-gray-900">
               All
-              <Badge variant="outline" className="ml-2">
-                {data?.withdrawals.length || 0}
-              </Badge>
+              <Badge variant="secondary" className="ml-2">{data?.withdrawals.length || 0}</Badge>
             </TabsTrigger>
-            <TabsTrigger value="pending">
+            <TabsTrigger value="pending" className="data-[state=active]:bg-white data-[state=active]:text-gray-900">
               Pending
-              <Badge variant="outline" className="ml-2">
-                {pendingCount}
-              </Badge>
+              <Badge variant="secondary" className="ml-2">{pendingCount}</Badge>
             </TabsTrigger>
-            <TabsTrigger value="approved">
+            <TabsTrigger value="approved" className="data-[state=active]:bg-white data-[state=active]:text-gray-900">
               Approved
-              <Badge variant="outline" className="ml-2">
-                {approvedCount}
-              </Badge>
+              <Badge variant="secondary" className="ml-2">{approvedCount}</Badge>
             </TabsTrigger>
-            <TabsTrigger value="rejected">
+            <TabsTrigger value="rejected" className="data-[state=active]:bg-white data-[state=active]:text-gray-900">
               Rejected
-              <Badge variant="outline" className="ml-2">
-                {rejectedCount}
-              </Badge>
+              <Badge variant="secondary" className="ml-2">{rejectedCount}</Badge>
             </TabsTrigger>
           </TabsList>
 
-          <div className="relative w-full sm:w-auto">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <div className="relative w-full sm:w-[300px]">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
             <Input
               type="search"
               placeholder="Search withdrawals..."
-              className="w-full sm:w-[300px] pl-8"
+              className="w-full pl-9 pr-3 py-2 text-sm border-gray-300 rounded-md"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
         </div>
 
-        <TabsContent value="all" className="m-0">
+        <TabsContent value="all" className="mt-0">
           <WithdrawalTable
             withdrawals={filteredWithdrawals}
             isLoading={isLoading}
@@ -166,8 +196,7 @@ export default function WithdrawalsPage() {
             onReject={handleReject}
           />
         </TabsContent>
-
-        <TabsContent value="pending" className="m-0">
+        <TabsContent value="pending" className="mt-0">
           <WithdrawalTable
             withdrawals={filteredWithdrawals}
             isLoading={isLoading}
@@ -175,8 +204,7 @@ export default function WithdrawalsPage() {
             onReject={handleReject}
           />
         </TabsContent>
-
-        <TabsContent value="approved" className="m-0">
+        <TabsContent value="approved" className="mt-0">
           <WithdrawalTable
             withdrawals={filteredWithdrawals}
             isLoading={isLoading}
@@ -184,8 +212,7 @@ export default function WithdrawalsPage() {
             onReject={handleReject}
           />
         </TabsContent>
-
-        <TabsContent value="rejected" className="m-0">
+        <TabsContent value="rejected" className="mt-0">
           <WithdrawalTable
             withdrawals={filteredWithdrawals}
             isLoading={isLoading}
@@ -195,7 +222,7 @@ export default function WithdrawalsPage() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
 
 function WithdrawalTable({
@@ -204,13 +231,13 @@ function WithdrawalTable({
   onApprove,
   onReject,
 }: {
-  withdrawals: any[]
-  isLoading: boolean
-  onApprove: (id: string) => void
-  onReject: (id: string) => void
+  withdrawals: Withdrawal[];
+  isLoading: boolean;
+  onApprove: (id: string) => void;
+  onReject: (id: string) => void;
 }) {
   return (
-    <Card>
+    <Card className="border-gray-200">
       <CardContent className="p-0">
         <div className="overflow-x-auto">
           <Table>
@@ -218,8 +245,8 @@ function WithdrawalTable({
               <TableRow>
                 <TableHead className="w-[100px]">ID</TableHead>
                 <TableHead>User</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Date</TableHead>
+                <TableHead>Points</TableHead>
+                <TableHead>Request Date</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -230,24 +257,12 @@ function WithdrawalTable({
                   .fill(0)
                   .map((_, i) => (
                     <TableRow key={i}>
-                      <TableCell>
-                        <Skeleton className="h-5 w-16" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-5 w-32" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-5 w-20" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-5 w-24" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-5 w-20" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-8 w-16 ml-auto" />
-                      </TableCell>
+                      <TableCell><Skeleton className="h-5 w-16" /></TableCell>
+                      <TableCell><Skeleton className="h-5 w-32" /></TableCell>
+                      <TableCell><Skeleton className="h-5 w-20" /></TableCell>
+                      <TableCell><Skeleton className="h-5 w-24" /></TableCell>
+                      <TableCell><Skeleton className="h-5 w-20" /></TableCell>
+                      <TableCell><Skeleton className="h-8 w-16 ml-auto" /></TableCell>
                     </TableRow>
                   ))
               ) : withdrawals.length === 0 ? (
@@ -258,16 +273,24 @@ function WithdrawalTable({
                 </TableRow>
               ) : (
                 withdrawals.map((withdrawal) => (
-                  <TableRow key={withdrawal.id}>
-                    <TableCell className="font-medium">{withdrawal.id.substring(0, 8)}...</TableCell>
-                    <TableCell>{withdrawal.user}</TableCell>
-                    <TableCell>${withdrawal.amount.toFixed(2)}</TableCell>
-                    <TableCell>{new Date(withdrawal.date).toLocaleDateString()}</TableCell>
+                  <TableRow key={withdrawal._id}>
+                    <TableCell className="font-medium">
+                      {withdrawal._id.substring(0, 8)}...
+                    </TableCell>
                     <TableCell>
-                      <StatusBadge status={withdrawal.status} />
+                      {`${withdrawal.user.firstName} ${withdrawal.user.lastName}`}
+                    </TableCell>
+                    <TableCell>{withdrawal.points}</TableCell>
+                    <TableCell>{new Date(withdrawal.requestDate).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      <StatusBadge status={withdrawal.status as "pending" | "approved" | "rejected"} />
                     </TableCell>
                     <TableCell className="text-right">
-                      <WithdrawalActions withdrawal={withdrawal} onApprove={onApprove} onReject={onReject} />
+                      <WithdrawalActions
+                        withdrawal={withdrawal}
+                        onApprove={onApprove}
+                        onReject={onReject}
+                      />
                     </TableCell>
                   </TableRow>
                 ))
@@ -277,43 +300,32 @@ function WithdrawalTable({
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge({ status }: { status: "pending" | "approved" | "rejected" }) {
   if (status === "approved") {
     return (
-      <Badge
-        variant="outline"
-        className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-400 dark:border-green-800"
-      >
+      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
         <CheckCircle className="mr-1 h-3 w-3" />
         Approved
       </Badge>
-    )
+    );
   }
-
   if (status === "rejected") {
     return (
-      <Badge
-        variant="outline"
-        className="bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-400 dark:border-red-800"
-      >
+      <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
         <XCircle className="mr-1 h-3 w-3" />
         Rejected
       </Badge>
-    )
+    );
   }
-
   return (
-    <Badge
-      variant="outline"
-      className="bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-950 dark:text-yellow-400 dark:border-yellow-800"
-    >
+    <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
       <Clock className="mr-1 h-3 w-3" />
       Pending
     </Badge>
-  )
+  );
 }
 
 function WithdrawalActions({
@@ -321,20 +333,18 @@ function WithdrawalActions({
   onApprove,
   onReject,
 }: {
-  withdrawal: any
-  onApprove: (id: string) => void
-  onReject: (id: string) => void
+  withdrawal: Withdrawal;
+  onApprove: (id: string) => void;
+  onReject: (id: string) => void;
 }) {
-  // If already processed, show view details only
   if (withdrawal.status !== "pending") {
     return (
       <Button variant="ghost" size="sm">
         View Details
       </Button>
-    )
+    );
   }
 
-  // For pending withdrawals, show approve/reject options
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -346,11 +356,11 @@ function WithdrawalActions({
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => onApprove(withdrawal.id)}>
+        <DropdownMenuItem onClick={() => onApprove(withdrawal._id)}>
           <CheckCircle className="mr-2 h-4 w-4 text-green-600" />
           Approve
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onReject(withdrawal.id)}>
+        <DropdownMenuItem onClick={() => onReject(withdrawal._id)}>
           <XCircle className="mr-2 h-4 w-4 text-red-600" />
           Reject
         </DropdownMenuItem>
@@ -358,5 +368,5 @@ function WithdrawalActions({
         <DropdownMenuItem>View Details</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

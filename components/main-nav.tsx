@@ -1,73 +1,93 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDown } from "lucide-react";
+import { useState } from "react";
+import type React from "react";
+import { SidebarNavItem } from "@/components/sidebar";
 
 interface MainNavProps {
-  className?: string
+  className?: string;
+  items: SidebarNavItem[];
 }
 
-export function MainNav({ className }: MainNavProps) {
-  const pathname = usePathname()
+export function MainNav({ className, items }: MainNavProps) {
+  const pathname = usePathname();
+  const [openItems, setOpenItems] = useState<string[]>([]);
 
-  const routes = [
-    {
-      href: "/dashboard",
-      label: "Dashboard",
-      active: pathname === "/dashboard",
-    },
-    {
-      href: "/dashboard/users",
-      label: "Users",
-      active: pathname === "/dashboard/users",
-    },
-    {
-      href: "/dashboard/withdrawals",
-      label: "Withdrawals",
-      active: pathname === "/dashboard/withdrawals",
-    },
-    {
-      href: "/dashboard/payment-approvals",
-      label: "Payment Approvals",
-      active: pathname === "/dashboard/payment-approvals",
-    },
-    {
-      href: "/dashboard/reports",
-      label: "Reports",
-      active: pathname === "/dashboard/reports",
-    },
-    {
-      href: "/dashboard/content",
-      label: "Content",
-      active: pathname === "/dashboard/content",
-    },
-    {
-      href: "/dashboard/settings",
-      label: "Settings",
-      active: pathname === "/dashboard/settings",
-    },
-    {
-      href: "/dashboard/help",
-      label: "Help & Support",
-      active: pathname === "/dashboard/help",
-    },
-  ]
+  const toggleItem = (title: string) => {
+    setOpenItems((prev) =>
+      prev.includes(title)
+        ? prev.filter((item) => item !== title)
+        : [...prev, title]
+    );
+  };
 
   return (
-    <nav className={cn("flex items-center space-x-4 lg:space-x-6", className)}>
-      {routes.map((route) => (
-        <Link
-          key={route.href}
-          href={route.href}
-          className={cn(
-            "text-sm font-medium transition-colors hover:text-primary",
-            route.active ? "text-black dark:text-white" : "text-muted-foreground",
+    <nav className={cn("flex flex-col gap-2", className)}>
+      {items.map((item) => (
+        <div key={item.href} className="flex flex-col">
+          {item.items && item.items.length > 0 ? (
+            <Collapsible
+              open={openItems.includes(item.title)}
+              onOpenChange={() => toggleItem(item.title)}
+            >
+              <CollapsibleTrigger
+                className={cn(
+                  "flex items-center w-full p-3 text-sm font-medium rounded-lg transition",
+                  pathname === item.href
+                    ? "bg-gray-800 text-white"
+                    : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                )}
+                aria-label={`Toggle ${item.title} menu`}
+              >
+                {item.icon && <span className="h-5 w-5 mr-3">{item.icon}</span>}
+                {item.title}
+                <ChevronDown
+                  className={cn(
+                    "h-4 w-4 ml-auto transition-transform",
+                    openItems.includes(item.title) ? "rotate-180" : ""
+                  )}
+                />
+              </CollapsibleTrigger>
+              <CollapsibleContent className="pl-8 pt-1">
+                {item.items.map((subItem) => (
+                  <Link
+                    key={subItem.href}
+                    href={subItem.href}
+                    className={cn(
+                      "block p-3 text-sm font-medium rounded-lg transition",
+                      pathname === subItem.href
+                        ? "bg-gray-700 text-white"
+                        : "text-gray-400 hover:bg-gray-700 hover:text-white"
+                    )}
+                    aria-label={subItem.title}
+                  >
+                    {subItem.title}
+                  </Link>
+                ))}
+              </CollapsibleContent>
+            </Collapsible>
+          ) : (
+            <Link
+              href={item.href}
+              className={cn(
+                "flex p-3 text-sm font-medium rounded-lg transition",
+                pathname === item.href
+                  ? "bg-gray-800 text-white"
+                  : "text-gray-400 hover:bg-gray-800 hover:text-white"
+              )}
+              aria-label={item.title}
+            >
+              {item.icon && <span className="h-5 w-5 mr-3">{item.icon}</span>}
+              {item.title}
+            </Link>
           )}
-        >
-          {route.label}
-        </Link>
+        </div>
       ))}
     </nav>
-  )
+  );
 }

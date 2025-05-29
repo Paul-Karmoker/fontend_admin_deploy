@@ -21,7 +21,15 @@ import { useAuth } from "@/lib/hooks/useAuth";
 
 interface SidebarProps {
   className?: string;
+  children?: React.ReactNode;
 }
+export interface SidebarNavItem {
+  title: string;
+  href: string; // Standardized to href
+  icon?: React.ReactNode;
+  items?: SidebarNavItem[];
+}
+
 
 export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname();

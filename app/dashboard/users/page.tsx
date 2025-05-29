@@ -52,8 +52,8 @@ export default function UsersPage() {
 
       const matchesType =
         typeFilter === "all" ||
-        (typeFilter === "premium" && user.subscriptionPlan === "premium") ||
-        (typeFilter === "free-trial" && user.subscriptionPlan === "freeTrial")
+        (typeFilter === "premium" && user.subscriptionType === "premium") ||
+        (typeFilter === "free-trial" && user.subscriptionType === "freeTrial")
 
       return matchesSearch && matchesStatus && matchesType
     }) || []
@@ -271,8 +271,8 @@ export default function UsersPage() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <Badge variant={user.subscriptionPlan === "premium" ? "outline" : "secondary"}>
-                            {user.subscriptionPlan === "premium" ? "Premium" : "Free Trial"}
+                          <Badge variant={user.subscriptionType === "premium" ? "outline" : "secondary"}>
+                            {user.subscriptionType === "premium" ? "Premium" : "Free Trial"}
                           </Badge>
                         </TableCell>
                         <TableCell>{user.points}</TableCell>

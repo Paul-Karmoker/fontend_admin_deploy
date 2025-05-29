@@ -310,6 +310,10 @@ function PaymentTable({
               <TableHead>Subscription</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Trial Expires</TableHead>
+              <TableHead>Payment Method</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>transaction ID</TableHead>
+              <TableHead>Plan</TableHead>
               <TableHead>Created</TableHead>
               {isPending && <TableHead className="text-right">Actions</TableHead>}
             </TableRow>
@@ -359,8 +363,10 @@ function PaymentTable({
         <TableHeader>
           <TableRow>
             <TableHead className="w-[250px]">User</TableHead>
-            <TableHead>Subscription</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead>Plan</TableHead>
+            <TableHead>Transaction</TableHead>
+            <TableHead>Amount</TableHead>
+            <TableHead>Payment Method</TableHead>
             <TableHead>Trial Expires</TableHead>
             <TableHead>Created</TableHead>
             {isPending && <TableHead className="text-right">Actions</TableHead>}
@@ -395,28 +401,40 @@ function PaymentTable({
                   </div>
                 </TableCell>
                 <TableCell>
-                  {getSubscriptionBadge(
-                    payment.subscriptionPlan,
-                    payment.subscriptionType || payment.subscriptionStatus,
-                  )}
+                  <Badge>{payment.subscriptionPlan}</Badge>
+                
                 </TableCell>
                 <TableCell>
                   <Badge
-                    variant={payment.subscriptionStatus === "active" ? "default" : "outline"}
-                    className={
-                      payment.subscriptionStatus === "active" ? "bg-green-100 text-green-800 border-green-200" : ""
-                    }
+                
+                    
                   >
-                    {payment.subscriptionStatus}
+                    {payment.transactionId ? payment.transactionId : "N/A"}
                   </Badge>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1 text-sm">
-                    <Calendar className="h-3 w-3" />
-                    {formatDate(payment.freeTrialExpiresAt)}
+                    
+                    {payment.amount}
                   </div>
                 </TableCell>
                 <TableCell>{formatDate(payment.createdAt)}</TableCell>
+
+                <TableCell>
+                  <div className="flex items-center gap-1 text-sm">
+                    <CreditCard className="h-4 w-4" />
+                    {payment.paymentProvider
+}
+                  </div>
+                </TableCell>
+
+                <TableCell>
+                  <div className="flex items-center gap-1 text-sm">
+                    <Clock className="h-4 w-4" />
+                    {formatDate(payment.subscriptionExpiresAt
+)}
+                  </div>
+                </TableCell>
                 {isPending && (
                   <TableCell className="text-right">
                     <Button

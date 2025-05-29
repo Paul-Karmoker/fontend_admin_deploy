@@ -1,0 +1,29 @@
+// src/types/paymentApproval.ts
+export interface PaymentApproval {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: string;
+  isVerified: boolean;
+  emailVerificationToken: string;
+  emailVerificationExpires: string;
+  referralCode: string;
+  points: number;
+  subscriptionPlan: string;
+  subscriptionStatus: string;
+  subscriptionType?: string;
+  freeTrialExpiresAt: string;
+  isDeleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+  referralEnabled?: boolean;
+  referredBy?: string;
+  amount?: number;
+  paymentId?: string;
+  paymentNumber?: string;
+  paymentProvider?: string;
+  subscriptionExpiresAt?: string;
+  transactionId?: string;
+}
