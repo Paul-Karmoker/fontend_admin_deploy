@@ -12,6 +12,9 @@ import {
   User,
   CreditCard,
   Calendar,
+  Zap,
+  ZapOff,
+  CircleDollarSign,
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -55,6 +58,7 @@ export default function PaymentApprovalsPage() {
       toast({
         title: "Payment Approved",
         description: "The subscription payment has been approved successfully.",
+        className: "bg-green-500 text-white",
       })
       refetchPending()
       refetchApproved()
@@ -92,22 +96,50 @@ export default function PaymentApprovalsPage() {
     })
   }
 
-  const getSubscriptionBadge = (plan: string, status: string) => {
-    if (plan === "premium" || status === "premium") {
-      return (
-        <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-          <CreditCard className="mr-1 h-3 w-3" />
-          Premium
-        </Badge>
-      )
+  const getPlanBadge = (plan: string) => {
+    switch (plan) {
+      case "trial":
+        return <Badge variant="outline" className="border-blue-300 text-blue-600"><Clock className="mr-1 h-3 w-3" /> Trial</Badge>
+      case "monthly":
+        return <Badge className="bg-blue-100 text-blue-800"><Calendar className="mr-1 h-3 w-3" /> Monthly</Badge>
+      case "quarterly":
+        return <Badge className="bg-purple-100 text-purple-800"><CircleDollarSign className="mr-1 h-3 w-3" /> Quarterly</Badge>
+      case "semiannual":
+        return <Badge className="bg-indigo-100 text-indigo-800"><Zap className="mr-1 h-3 w-3" /> Semi-Annual</Badge>
+      case "yearly":
+        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="mr-1 h-3 w-3" /> Yearly</Badge>
+      default:
+        return <Badge variant="outline"><ZapOff className="mr-1 h-3 w-3" /> Unknown</Badge>
     }
-    return (
-      <Badge variant="outline">
-        <Clock className="mr-1 h-3 w-3" />
-        Free Trial
-      </Badge>
-    )
   }
+
+  // Count subscription types
+  const countSubscriptions = (payments: any[]) => {
+    const counts = {
+      trial: 0,
+      monthly: 0,
+      quarterly: 0,
+      semiannual: 0,
+      yearly: 0,
+      total: 0
+    }
+    
+    if (!payments) return counts
+    
+    type PlanType = "trial" | "monthly" | "quarterly" | "semiannual" | "yearly";
+    payments.forEach(payment => {
+      const plan = (payment.subscriptionPlan?.toLowerCase() as PlanType) || 'trial';
+      if (Object.prototype.hasOwnProperty.call(counts, plan)) {
+        counts[plan]++;
+      }
+      counts.total++;
+    })
+    
+    return counts
+  }
+
+  const pendingCounts = countSubscriptions(pendingData?.withdrawals || [])
+  const approvedCounts = countSubscriptions(approvedData?.withdrawals || [])
 
   if (pendingError || approvedError) {
     return (
@@ -161,51 +193,72 @@ export default function PaymentApprovalsPage() {
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid gap-6 md:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-4 lg:grid-cols-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Payments</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Pending</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{pendingData?.withdrawals?.length || 0}</div>
-            <p className="text-xs text-muted-foreground">Awaiting approval</p>
+            <div className="text-2xl font-bold">{pendingCounts.total}</div>
+            <div className="flex flex-wrap gap-1 mt-2">
+              <Badge variant="outline" className="text-xs py-0.5">{pendingCounts.trial} trial</Badge>
+              <Badge variant="outline" className="text-xs py-0.5">{pendingCounts.monthly} monthly</Badge>
+              <Badge variant="outline" className="text-xs py-0.5">{pendingCounts.quarterly} quarterly</Badge>
+            </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Approved Payments</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Approved</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{approvedData?.withdrawals?.length || 0}</div>
-            <p className="text-xs text-muted-foreground">Successfully processed</p>
+            <div className="text-2xl font-bold">{approvedCounts.total}</div>
+            <div className="flex flex-wrap gap-1 mt-2">
+              <Badge variant="outline" className="text-xs py-0.5">{approvedCounts.semiannual} semi</Badge>
+              <Badge variant="outline" className="text-xs py-0.5">{approvedCounts.yearly} yearly</Badge>
+            </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Premium Users</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Trial Users</CardTitle>
+            <Clock className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {approvedData?.withdrawals?.filter(
-                (p) => p.subscriptionType === "premium" || p.subscriptionPlan === "premium",
-              ).length || 0}
-            </div>
-            <p className="text-xs text-muted-foreground">Active premium subscriptions</p>
+            <div className="text-2xl font-bold">{pendingCounts.trial + approvedCounts.trial}</div>
+            <p className="text-xs text-muted-foreground">Free trial period</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <User className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Monthly Plans</CardTitle>
+            <Calendar className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {(pendingData?.withdrawals?.length || 0) + (approvedData?.withdrawals?.length || 0)}
-            </div>
-            <p className="text-xs text-muted-foreground">All payment requests</p>
+            <div className="text-2xl font-bold">{pendingCounts.monthly + approvedCounts.monthly}</div>
+            <p className="text-xs text-muted-foreground">30-day subscriptions</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Quarterly Plans</CardTitle>
+            <CircleDollarSign className="h-4 w-4 text-purple-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{pendingCounts.quarterly + approvedCounts.quarterly}</div>
+            <p className="text-xs text-muted-foreground">90-day subscriptions</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Yearly Plans</CardTitle>
+            <CheckCircle className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{approvedCounts.yearly}</div>
+            <p className="text-xs text-muted-foreground">Annual subscriptions</p>
           </CardContent>
         </Card>
       </div>
@@ -222,15 +275,15 @@ export default function PaymentApprovalsPage() {
                 <TabsTrigger value="pending" className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
                   Pending
-                  <Badge variant="outline" className="ml-1">
-                    {pendingData?.withdrawals?.length || 0}
+                  <Badge variant="secondary" className="ml-1">
+                    {pendingCounts.total}
                   </Badge>
                 </TabsTrigger>
                 <TabsTrigger value="approved" className="flex items-center gap-2">
                   <CheckCircle className="h-4 w-4" />
                   Approved
-                  <Badge variant="outline" className="ml-1">
-                    {approvedData?.withdrawals?.length || 0}
+                  <Badge variant="secondary" className="ml-1">
+                    {approvedCounts.total}
                   </Badge>
                 </TabsTrigger>
               </TabsList>
@@ -261,7 +314,7 @@ export default function PaymentApprovalsPage() {
                 onApprove={handleApprovePayment}
                 isApproving={isApproving}
                 formatDate={formatDate}
-                getSubscriptionBadge={getSubscriptionBadge}
+                getPlanBadge={getPlanBadge}
               />
             </TabsContent>
 
@@ -273,7 +326,7 @@ export default function PaymentApprovalsPage() {
                 onApprove={handleApprovePayment}
                 isApproving={isApproving}
                 formatDate={formatDate}
-                getSubscriptionBadge={getSubscriptionBadge}
+                getPlanBadge={getPlanBadge}
               />
             </TabsContent>
           </Tabs>
@@ -290,7 +343,7 @@ function PaymentTable({
   onApprove,
   isApproving,
   formatDate,
-  getSubscriptionBadge,
+  getPlanBadge,
 }: {
   payments: any[]
   isLoading: boolean
@@ -298,7 +351,7 @@ function PaymentTable({
   onApprove: (id: string) => void
   isApproving: boolean
   formatDate: (date: string) => string
-  getSubscriptionBadge: (plan: string, status: string) => JSX.Element
+  getPlanBadge: (plan: string) => JSX.Element
 }) {
   if (isLoading) {
     return (
@@ -307,13 +360,11 @@ function PaymentTable({
           <TableHeader>
             <TableRow>
               <TableHead className="w-[250px]">User</TableHead>
-              <TableHead>Subscription</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Trial Expires</TableHead>
-              <TableHead>Payment Method</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>transaction ID</TableHead>
               <TableHead>Plan</TableHead>
+              <TableHead>Transaction</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Payment Method</TableHead>
+              <TableHead>Trial Expires</TableHead>
               <TableHead>Created</TableHead>
               {isPending && <TableHead className="text-right">Actions</TableHead>}
             </TableRow>
@@ -375,7 +426,7 @@ function PaymentTable({
         <TableBody>
           {payments.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={isPending ? 6 : 5} className="h-24 text-center">
+              <TableCell colSpan={isPending ? 8 : 7} className="h-24 text-center">
                 No {isPending ? "pending" : "approved"} payments found.
               </TableCell>
             </TableRow>
@@ -401,38 +452,33 @@ function PaymentTable({
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge>{payment.subscriptionPlan}</Badge>
-                
+                  {getPlanBadge(payment.subscriptionPlan?.toLowerCase() || 'trial')}
                 </TableCell>
                 <TableCell>
-                  <Badge
-                
-                    
-                  >
-                    {payment.transactionId ? payment.transactionId : "N/A"}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-1 text-sm">
-                    
-                    {payment.amount}
+                  <div className="font-mono text-[18px] w-[100px]">
+                    {payment.transactionId ? payment.transactionId.slice(0, 8) : 'N/A'}
                   </div>
                 </TableCell>
-                <TableCell>{formatDate(payment.createdAt)}</TableCell>
-
                 <TableCell>
-                  <div className="flex items-center gap-1 text-sm">
-                    <CreditCard className="h-4 w-4" />
-                    {payment.paymentProvider
-}
+                  <div className="font-medium text-[18px">
+                    ${payment.amount ? payment.amount.toFixed(2) : "0.00"}
                   </div>
                 </TableCell>
-
+                <TableCell>
+                  <div className="flex items-center gap-1 text-sm capitalize">
+                    <CreditCard className="h-4 w-4 text-muted-foreground" />
+                    {payment.paymentProvider || 'N/A'}
+                  </div>
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1 text-sm">
-                    <Clock className="h-4 w-4" />
-                    {formatDate(payment.subscriptionExpiresAt
-)}
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    {formatDate(payment.subscriptionExpiresAt)}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="text-sm text-muted-foreground">
+                    {formatDate(payment.createdAt)}
                   </div>
                 </TableCell>
                 {isPending && (
@@ -441,7 +487,7 @@ function PaymentTable({
                       size="sm"
                       onClick={() => onApprove(payment._id)}
                       disabled={isApproving}
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-green-600 hover:bg-green-700 text-white"
                     >
                       {isApproving ? (
                         <RefreshCw className="mr-2 h-4 w-4 animate-spin" />

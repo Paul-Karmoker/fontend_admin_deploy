@@ -137,10 +137,10 @@ export default function WithdrawalsPage() {
   }
 
   return (
-    <div className="space-y-4 p-6 bg-white rounded-lg shadow-sm">
+    <div className="space-y-4 p-6  rounded-lg shadow-sm">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-semibold text-gray-900">Withdrawal Requests</h2>
+          <h2 className="text-2xl text-white font-semibold ">Withdrawal Requests</h2>
           <p className="text-sm text-gray-500">Manage and process user withdrawal requests</p>
         </div>
         <div className="flex items-center gap-2">
@@ -157,7 +157,7 @@ export default function WithdrawalsPage() {
 
       <Tabs defaultValue="all" className="w-full" onValueChange={setStatusFilter}>
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-          <TabsList className="grid w-full sm:w-auto grid-cols-4 bg-gray-100 p-1 rounded-lg">
+          <TabsList className="grid w-full sm:w-auto grid-cols-4 bg-gray-500 p-1 rounded-lg">
             <TabsTrigger value="all" className="data-[state=active]:bg-white data-[state=active]:text-gray-900">
               All
               <Badge variant="secondary" className="ml-2">{data?.withdrawals.length || 0}</Badge>
@@ -245,9 +245,10 @@ function WithdrawalTable({
               <TableRow>
                 <TableHead className="w-[100px]">ID</TableHead>
                 <TableHead>User</TableHead>
+                <TableHead>Paymnet Method</TableHead>
+                <TableHead>Payment Number</TableHead>
                 <TableHead>Points</TableHead>
                 <TableHead>Request Date</TableHead>
-                <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -262,7 +263,7 @@ function WithdrawalTable({
                       <TableCell><Skeleton className="h-5 w-20" /></TableCell>
                       <TableCell><Skeleton className="h-5 w-24" /></TableCell>
                       <TableCell><Skeleton className="h-5 w-20" /></TableCell>
-                      <TableCell><Skeleton className="h-8 w-16 ml-auto" /></TableCell>
+                      <TableCell><Skeleton className="h-8 w-16" /></TableCell>
                     </TableRow>
                   ))
               ) : withdrawals.length === 0 ? (
@@ -280,6 +281,8 @@ function WithdrawalTable({
                     <TableCell>
                       {`${withdrawal.user.firstName} ${withdrawal.user.lastName}`}
                     </TableCell>
+                    <TableCell>{withdrawal.paymentProvider}</TableCell>
+                    <TableCell>{withdrawal.paymentNumber}</TableCell>
                     <TableCell>{withdrawal.points}</TableCell>
                     <TableCell>{new Date(withdrawal.requestDate).toLocaleDateString()}</TableCell>
                     <TableCell>
