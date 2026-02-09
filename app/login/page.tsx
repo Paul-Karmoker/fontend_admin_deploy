@@ -3,7 +3,21 @@
 import React, { useState, useEffect, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Lock, Mail, AlertCircle, ArrowRight } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Lock,
+  Mail,
+  AlertCircle,
+  ArrowRight,
+  ShieldCheck,
+  BarChart3,
+  Users,
+  LayoutDashboard,
+  Globe,
+  Zap,
+} from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -52,216 +66,243 @@ export default function LoginPage() {
       await login(formData).unwrap();
       router.push("/dashboard");
     } catch (err: any) {
-      setFormError(err.data?.message || "Login failed. Please check your credentials.");
+      setFormError(
+        err.data?.message || "Login failed. Please check your credentials.",
+      );
     }
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-12 flex-col justify-between relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }} />
-        </div>
+    <div className="min-h-screen flex w-full bg-white text-zinc-950 font-sans selection:bg-zinc-900 selection:text-white">
+      {/* Left Panel - Enterprise Branding (Clean White/Zinc Theme) */}
+      <div className="hidden lg:flex lg:w-1/2 bg-zinc-50 p-16 flex-col justify-between relative border-r border-zinc-200 overflow-hidden">
+        {/* Subtle Technical Grid Pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.4]"
+          style={{
+            backgroundImage: `linear-gradient(#e4e4e7 1px, transparent 1px), linear-gradient(90deg, #e4e4e7 1px, transparent 1px)`,
+            backgroundSize: "40px 40px",
+          }}
+        />
 
-        {/* Content */}
+        {/* Top Header */}
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-16">
-            <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-white/10 backdrop-blur">
-              <span className="text-lg font-bold text-white">A</span>
+          <div className="flex items-center gap-4">
+            <div className="flex flex-col">
+              <div className="mb-2">
+                <Image
+                  src="/Logo.gif"
+                  alt="Logo"
+                  width={130}
+                  height={45}
+                  priority
+                  className="mix-blend-multiply"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="h-px w-8 bg-zinc-300"></span>
+                <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.3em]">
+                  Enterprise v2.0
+                </span>
+              </div>
             </div>
-            <span className="text-xl font-semibold text-white">Admin Dashboard</span>
           </div>
         </div>
 
-        <div className="relative z-10 space-y-6">
-          <h1 className="text-4xl font-bold text-white leading-tight">
-            Enterprise Admin<br />Control Center
+        {/* Main Content */}
+        <div className="relative z-10 max-w-lg">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white border border-zinc-200 rounded-full mb-8 shadow-sm">
+            <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></div>
+            <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-wider">
+              System Operational
+            </span>
+          </div>
+
+          <h1 className="text-6xl font-bold tracking-tighter leading-[0.95] text-zinc-900 mb-8">
+            The Central <br />
+            <span className="text-zinc-400">Control Hub.</span>
           </h1>
-          <p className="text-lg text-slate-300 max-w-md">
-            Manage users, monitor analytics, and oversee your entire platform from a single, powerful dashboard.
+
+          <p className="text-lg text-zinc-600 mb-12 leading-relaxed border-l-4 border-zinc-900 pl-6">
+            Secure enterprise-grade access for organizational management,
+            real-time analytics, and infrastructure oversight.
           </p>
-          
-          {/* Features */}
-          <div className="grid grid-cols-2 gap-4 mt-8">
-            <div className="flex items-center gap-3 text-slate-300">
-              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+
+          {/* Data Points Grid */}
+          <div className="grid grid-cols-2 gap-px bg-zinc-200 border border-zinc-200 shadow-xl shadow-zinc-200/50">
+            {[
+              { icon: BarChart3, label: "Analytics", desc: "Live Metrics" },
+              { icon: Users, label: "Identity", desc: "Access Control" },
+              { icon: ShieldCheck, label: "Security", desc: "ISO Certified" },
+              { icon: Globe, label: "Network", desc: "Global Edge" },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="bg-white p-6 hover:bg-zinc-50 transition-colors"
+              >
+                <item.icon className="w-6 h-6 text-zinc-900 mb-3" />
+                <h3 className="font-bold text-xs text-zinc-900 uppercase tracking-widest">
+                  {item.label}
+                </h3>
+                <p className="text-[10px] text-zinc-400 uppercase mt-1">
+                  {item.desc}
+                </p>
               </div>
-              <span className="text-sm">Real-time Analytics</span>
-            </div>
-            <div className="flex items-center gap-3 text-slate-300">
-              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <span className="text-sm">User Management</span>
-            </div>
-            <div className="flex items-center gap-3 text-slate-300">
-              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <span className="text-sm">Secure Access</span>
-            </div>
-            <div className="flex items-center gap-3 text-slate-300">
-              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <span className="text-sm">Advanced Reports</span>
-            </div>
+            ))}
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="relative z-10 pt-8 border-t border-white/10">
-          <p className="text-sm text-slate-400">
-            © 2024 Admin Dashboard. All rights reserved.
+        {/* Footer info */}
+        <div className="relative z-10 flex justify-between items-end">
+          <div className="font-mono text-[10px] text-zinc-400 space-y-1">
+            <p>LOC: TERMINAL_01</p>
+            <p>SSL: ACTIVE_ENCRYPTED</p>
+          </div>
+          <p className="text-[10px] text-zinc-400 font-medium uppercase tracking-widest">
+            © 2026 Admin Dashboard Inc.
           </p>
         </div>
       </div>
 
-      {/* Right Panel - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-background">
-        <div className="w-full max-w-md space-y-8">
-          {/* Mobile Logo */}
-          <div className="lg:hidden flex items-center gap-3 mb-8">
-            <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-primary text-primary-foreground font-bold">
-              <span className="text-lg">A</span>
-            </div>
-            <span className="text-xl font-semibold">Admin Dashboard</span>
+      {/* Right Panel - Login Form (High Contrast White) */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-24 bg-white">
+        <div className="w-full max-w-md">
+          {/* Mobile View Header */}
+          <div className="lg:hidden flex flex-col items-center mb-12">
+            <Image
+              src="/Logo.gif"
+              alt="Logo"
+              width={120}
+              height={40}
+              className="mb-4"
+            />
+            <div className="h-px w-12 bg-zinc-200"></div>
           </div>
 
-          {/* Header */}
-          <div className="space-y-2">
-            <h2 className="text-2xl font-bold tracking-tight text-foreground">
-              Welcome back
-            </h2>
-            <p className="text-muted-foreground">
-              Enter your credentials to access the dashboard
-            </p>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {(formError || error) && (
-              <Alert variant="destructive" className="animate-slide-up">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  {formError || (error as any)?.data?.message || "An error occurred during login"}
-                </AlertDescription>
-              </Alert>
-            )}
-
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="admin@company.com"
-                    className="pl-10 h-11"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    autoComplete="email"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-                  <Link
-                    href="/forgot-password"
-                    className="text-sm text-primary hover:text-primary/80 transition-colors"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    className="pl-10 pr-10 h-11"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    autoComplete="current-password"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-muted-foreground hover:text-foreground"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                    <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
-                  </Button>
-                </div>
-              </div>
+          <div className="space-y-10">
+            <div className="space-y-3">
+              <h2 className="text-4xl font-black tracking-tight text-zinc-900 uppercase">
+                Authenticate
+              </h2>
+              <p className="text-zinc-500 font-medium">
+                Enter your administrative credentials to bridge the connection.
+              </p>
             </div>
 
-            <Button
-              type="submit"
-              className="w-full h-11"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <svg
-                    className="animate-spin -ml-1 mr-2 h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  Signing in...
-                </>
-              ) : (
-                <>
-                  Sign in
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {(formError || error) && (
+                <Alert
+                  variant="destructive"
+                  className="rounded-none border-red-100 bg-red-50 text-red-900 shadow-none py-4"
+                >
+                  <AlertCircle className="h-5 w-5" />
+                  <AlertDescription className="ml-2 font-bold text-xs uppercase tracking-wide">
+                    {formError ||
+                      (error as any)?.data?.message ||
+                      "Access Denied"}
+                  </AlertDescription>
+                </Alert>
               )}
-            </Button>
-          </form>
 
-          {/* Footer */}
-          <div className="text-center text-sm text-muted-foreground">
-            <p>Need help? Contact your system administrator</p>
+              <div className="space-y-5">
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="email"
+                    className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400"
+                  >
+                    Corporate Email
+                  </Label>
+                  <div className="relative group">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-300 group-focus-within:text-zinc-900 transition-colors" />
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="admin@enterprise.com"
+                      className="pl-11 h-14 rounded-none border-zinc-200 bg-white focus:border-zinc-950 focus:ring-0 transition-all placeholder:text-zinc-300 text-zinc-900 font-medium"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label
+                      htmlFor="password"
+                      className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400"
+                    >
+                      Access Token
+                    </Label>
+                    <Link
+                      href="/forgot-password"
+                      className="text-[10px] font-bold text-zinc-400 hover:text-zinc-900 transition-colors uppercase tracking-widest"
+                    >
+                      Reset Key?
+                    </Link>
+                  </div>
+                  <div className="relative group">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-300 group-focus-within:text-zinc-900 transition-colors" />
+                    <Input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      className="pl-11 pr-12 h-14 rounded-none border-zinc-200 bg-white focus:border-zinc-950 focus:ring-0 transition-all placeholder:text-zinc-300 text-zinc-900"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-0 top-0 h-14 w-12 flex items-center justify-center text-zinc-300 hover:text-zinc-900 transition-colors"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full h-14 rounded-none bg-zinc-900 hover:bg-black text-white font-bold tracking-[0.3em] uppercase transition-all shadow-lg shadow-zinc-200 hover:shadow-zinc-300 active:scale-[0.99] disabled:opacity-70"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <span className="flex items-center gap-3">
+                    <Zap className="h-4 w-4 animate-pulse fill-white" />
+                    Processing...
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    Establish Connection <ArrowRight className="h-4 w-4" />
+                  </span>
+                )}
+              </Button>
+            </form>
+
+            <div className="pt-10 flex flex-col items-center gap-6">
+              <div className="flex items-center gap-2 text-zinc-300">
+                <div className="h-px w-8 bg-zinc-200"></div>
+                <span className="text-[10px] font-bold uppercase tracking-widest">
+                  Secure Entry Point
+                </span>
+                <div className="h-px w-8 bg-zinc-200"></div>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="w-10 h-10 border border-zinc-100 flex items-center justify-center grayscale hover:grayscale-0 transition-all opacity-50">
+                  <ShieldCheck className="w-5 h-5 text-zinc-400" />
+                </div>
+                {/* Placeholder for other security icons */}
+              </div>
+            </div>
           </div>
         </div>
       </div>
