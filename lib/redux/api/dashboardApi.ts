@@ -104,13 +104,35 @@ export interface PaymentApprovalResponse {
 export const dashboardApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getDashboardData: builder.query<DashboardData, void>({
-      query: () => "/api/v1/admin/dashboard",
+      query: () => ({
+        url: "/api/v1/admin/dashboard",
+        method: "GET",
+      }),
       providesTags: ["Dashboard", "Users"],
+      transformResponse: (response: any) => {
+        console.log("Dashboard API Response:", response);
+        return response;
+      },
+      transformErrorResponse: (error: any) => {
+        console.error("Dashboard API Error:", error);
+        return error;
+      },
     }),
 
     getWithdrawals: builder.query<WithdrawalResponse, void>({
-      query: () => "/api/v1/admin/withdrawalslist",
+      query: () => ({
+        url: "/api/v1/admin/withdrawalslist",
+        method: "GET",
+      }),
       providesTags: ["Withdrawals"],
+      transformResponse: (response: any) => {
+        console.log("Withdrawals API Response:", response);
+        return response;
+      },
+      transformErrorResponse: (error: any) => {
+        console.error("Withdrawals API Error:", error);
+        return error;
+      },
     }),
 
     approveWithdrawal: builder.mutation<{ message: string }, string>({

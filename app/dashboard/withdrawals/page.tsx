@@ -62,7 +62,7 @@ export interface WithdrawalResponse {
 }
 
 export default function WithdrawalsPage() {
-  const { data, isLoading, isError, refetch } = useGetWithdrawalsQuery();
+  const { data, isLoading, isError, error, refetch } = useGetWithdrawalsQuery();
   const [approveWithdrawal] = useApproveWithdrawalMutation();
   const [rejectWithdrawal] = useRejectWithdrawalMutation();
   const { toast } = useToast();
@@ -127,6 +127,9 @@ export default function WithdrawalsPage() {
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>
           Failed to load withdrawal data. Please try refreshing the page.
+          <div className="mt-2 text-xs">
+            Error: {error ? JSON.stringify(error) : 'Unknown error'}
+          </div>
           <Button variant="outline" size="sm" className="mt-2" onClick={() => refetch()}>
             <RefreshCw className="mr-2 h-4 w-4" />
             Retry

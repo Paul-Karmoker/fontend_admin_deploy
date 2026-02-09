@@ -3,78 +3,563 @@
 @tailwind utilities;
 
 @layer base {
+  /* ==========================================================================
+     ENTERPRISE DESIGN SYSTEM - COLOR TOKENS
+     Inspired by Stripe, Vercel, Linear, Datadog
+     ========================================================================== */
+  
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
+    /* ---------------------------------------------------------------------
+       CORE COLOR PALETTE - Neutral Scale (Grays)
+       Used for backgrounds, text, borders
+       --------------------------------------------------------------------- */
+    --color-white: 0 0% 100%;
+    --color-black: 0 0% 0%;
+    
+    /* Neutral 50-950 for light mode */
+    --neutral-50: 210 40% 98%;
+    --neutral-100: 210 40% 96%;
+    --neutral-200: 214 32% 91%;
+    --neutral-300: 213 27% 84%;
+    --neutral-400: 215 20% 65%;
+    --neutral-500: 215 14% 34%;
+    --neutral-600: 215 18% 32%;
+    --neutral-700: 215 25% 27%;
+    --neutral-800: 215 30% 22%;
+    --neutral-900: 222 47% 11%;
+    --neutral-950: 224 71% 4%;
 
-    /* Sidebar */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* ---------------------------------------------------------------------
+       SEMANTIC COLORS - Primary Brand
+       --------------------------------------------------------------------- */
+    /* Primary: Indigo - Professional, trustworthy, tech-focused */
+    --primary-50: 221 83% 97%;
+    --primary-100: 221 83% 95%;
+    --primary-200: 221 83% 90%;
+    --primary-300: 221 83% 80%;
+    --primary-400: 221 83% 67%;
+    --primary-500: 221 83% 53%;
+    --primary-600: 221 83% 43%;
+    --primary-700: 221 83% 35%;
+    --primary-800: 221 83% 28%;
+    --primary-900: 221 83% 23%;
+    --primary-950: 221 100% 14%;
+
+    /* Secondary: Slate - Complementary, subtle accents */
+    --secondary-50: 210 40% 98%;
+    --secondary-100: 210 40% 96%;
+    --secondary-200: 214 32% 91%;
+    --secondary-300: 213 27% 84%;
+    --secondary-400: 215 20% 65%;
+    --secondary-500: 215 14% 34%;
+    --secondary-600: 215 18% 32%;
+    --secondary-700: 215 25% 27%;
+    --secondary-800: 215 30% 22%;
+    --secondary-900: 222 47% 11%;
+    --secondary-950: 224 71% 4%;
+
+    /* ---------------------------------------------------------------------
+       SEMANTIC COLORS - Functional States
+       --------------------------------------------------------------------- */
+    
+    /* Success: Emerald - Positive actions, completed states */
+    --success-50: 152 86% 96%;
+    --success-100: 152 86% 90%;
+    --success-200: 152 86% 80%;
+    --success-300: 152 86% 65%;
+    --success-400: 152 86% 53%;
+    --success-500: 152 86% 43%;
+    --success-600: 152 86% 35%;
+    --success-700: 152 86% 28%;
+    --success-800: 152 86% 23%;
+    --success-900: 152 86% 19%;
+    --success-950: 152 91% 10%;
+
+    /* Warning: Amber - Caution, pending states */
+    --warning-50: 45 93% 97%;
+    --warning-100: 45 93% 94%;
+    --warning-200: 45 93% 88%;
+    --warning-300: 45 93% 76%;
+    --warning-400: 45 93% 61%;
+    --warning-500: 45 93% 49%;
+    --warning-600: 45 93% 40%;
+    --warning-700: 45 93% 32%;
+    --warning-800: 45 93% 27%;
+    --warning-900: 45 93% 23%;
+    --warning-950: 47 89% 13%;
+
+    /* Danger: Rose - Errors, destructive actions */
+    --danger-50: 346 87% 97%;
+    --danger-100: 346 87% 94%;
+    --danger-200: 346 87% 88%;
+    --danger-300: 346 87% 76%;
+    --danger-400: 346 87% 61%;
+    --danger-500: 346 87% 49%;
+    --danger-600: 346 87% 40%;
+    --danger-700: 346 87% 32%;
+    --danger-800: 346 87% 27%;
+    --danger-900: 346 87% 23%;
+    --danger-950: 348 89% 11%;
+
+    /* Info: Sky - Information, neutral announcements */
+    --info-50: 199 89% 98%;
+    --info-100: 199 89% 95%;
+    --info-200: 199 89% 90%;
+    --info-300: 199 89% 80%;
+    --info-400: 199 89% 67%;
+    --info-500: 199 89% 53%;
+    --info-600: 199 89% 43%;
+    --info-700: 199 89% 35%;
+    --info-800: 199 89% 28%;
+    --info-900: 199 89% 23%;
+    --info-950: 197 91% 14%;
+
+    /* ---------------------------------------------------------------------
+       CHART COLORS - Professional palette for data visualization
+       --------------------------------------------------------------------- */
+    --chart-1: 221 83% 53%;
+    --chart-2: 152 86% 43%;
+    --chart-3: 45 93% 49%;
+    --chart-4: 346 87% 49%;
+    --chart-5: 262 83% 58%;
+    --chart-6: 190 86% 40%;
+    --chart-7: 199 89% 53%;
+    --chart-8: 24 95% 53%;
+
+    /* ==========================================================================
+       APPLICATION SEMANTIC MAPPINGS
+       ========================================================================== */
+    
+    /* Background & Foreground - Light Mode */
+    --background: var(--neutral-50);
+    --foreground: var(--neutral-900);
+    
+    /* Card - Surface colors for content containers */
+    --card: var(--color-white);
+    --card-foreground: var(--neutral-900);
+    
+    /* Popover - Dropdown, modal backgrounds */
+    --popover: var(--color-white);
+    --popover-foreground: var(--neutral-900);
+    
+    /* Primary Brand Colors */
+    --primary: var(--primary-600);
+    --primary-foreground: var(--color-white);
+    
+    /* Secondary Colors */
+    --secondary: var(--neutral-100);
+    --secondary-foreground: var(--neutral-900);
+    
+    /* Muted - Subtle text, borders, backgrounds */
+    --muted: var(--neutral-100);
+    --muted-foreground: var(--neutral-500);
+    
+    /* Accent - Interactive states, highlights */
+    --accent: var(--neutral-100);
+    --accent-foreground: var(--neutral-900);
+    
+    /* Destructive - Errors, danger actions */
+    --destructive: var(--danger-500);
+    --destructive-foreground: var(--color-white);
+    
+    /* Border & Input */
+    --border: var(--neutral-200);
+    --input: var(--neutral-200);
+    --ring: var(--primary-500);
+
+    /* ==========================================================================
+       TYPOGRAPHY SCALE
+       ========================================================================== */
+    
+    /* Font Families */
+    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", Monaco, "Cascadia Code", monospace;
+
+    /* Font Sizes - Scale ratio: 1.25 (Major Third) */
+    --text-xs: 0.75rem;      /* 12px */
+    --text-sm: 0.875rem;     /* 14px */
+    --text-base: 1rem;       /* 16px */
+    --text-lg: 1.125rem;     /* 18px */
+    --text-xl: 1.25rem;      /* 20px */
+    --text-2xl: 1.5rem;      /* 24px */
+    --text-3xl: 1.875rem;    /* 30px */
+    --text-4xl: 2.25rem;     /* 36px */
+    --text-5xl: 3rem;        /* 48px */
+
+    /* Font Weights */
+    --font-normal: 400;
+    --font-medium: 500;
+    --font-semibold: 600;
+    --font-bold: 700;
+
+    /* Line Heights */
+    --leading-tight: 1.25;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.625;
+
+    /* ==========================================================================
+       SPACING SYSTEM - Based on 4px grid
+       ========================================================================== */
+    --space-1: 0.25rem;   /* 4px */
+    --space-2: 0.5rem;    /* 8px */
+    --space-3: 0.75rem;   /* 12px */
+    --space-4: 1rem;      /* 16px */
+    --space-5: 1.25rem;   /* 20px */
+    --space-6: 1.5rem;    /* 24px */
+    --space-8: 2rem;      /* 32px */
+    --space-10: 2.5rem;   /* 40px */
+    --space-12: 3rem;     /* 48px */
+    --space-16: 4rem;     /* 64px */
+    --space-20: 5rem;     /* 80px */
+
+    /* ==========================================================================
+       BORDER RADIUS - Consistent rounded corners
+       ========================================================================== */
+    --radius-none: 0;
+    --radius-sm: 0.25rem;      /* 4px */
+    --radius-md: 0.375rem;      /* 6px - Subtle, professional */
+    --radius-lg: 0.5rem;        /* 8px - Cards, buttons */
+    --radius-xl: 0.75rem;       /* 12px - Modals, dropdowns */
+    --radius-2xl: 1rem;          /* 16px - Large containers */
+    --radius-full: 9999px;      /* Pill shape */
+
+    /* ==========================================================================
+       SHADOWS & ELEVATION - Depth and hierarchy
+       ========================================================================== */
+    --shadow-xs: 0 1px 2px 0 hsl(var(--neutral-900) / 0.05);
+    --shadow-sm: 0 1px 3px 0 hsl(var(--neutral-900) / 0.1), 0 1px 2px -1px hsl(var(--neutral-900) / 0.1);
+    --shadow-md: 0 4px 6px -1px hsl(var(--neutral-900) / 0.1), 0 2px 4px -2px hsl(var(--neutral-900) / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(var(--neutral-900) / 0.1), 0 4px 6px -4px hsl(var(--neutral-900) / 0.1);
+    --shadow-xl: 0 20px 25px -5px hsl(var(--neutral-900) / 0.1), 0 8px 10px -6px hsl(var(--neutral-900) / 0.1);
+    --shadow-2xl: 0 25px 50px -12px hsl(var(--neutral-900) / 0.25);
+    --shadow-inner: inset 0 2px 4px 0 hsl(var(--neutral-900) / 0.05);
+
+    /* Sidebar specific */
+    --sidebar-background: var(--neutral-100);
+    --sidebar-foreground: var(--neutral-700);
+    --sidebar-primary: var(--primary-600);
+    --sidebar-primary-foreground: var(--color-white);
+    --sidebar-accent: var(--neutral-200);
+    --sidebar-accent-foreground: var(--neutral-900);
+    --sidebar-border: var(--neutral-200);
+    --sidebar-ring: var(--primary-500);
+
+    /* ==========================================================================
+       TRANSITIONS - Smooth animations
+       ========================================================================== */
+    --transition-fast: 150ms ease;
+    --transition-normal: 200ms ease;
+    --transition-slow: 300ms ease;
+    --transition-spring: 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
 
+  /* ==========================================================================
+     DARK MODE OVERRIDES
+     ========================================================================== */
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 224.3 76.3% 48%;
+    /* Background & Foreground - Dark Mode */
+    --background: var(--neutral-950);
+    --foreground: var(--neutral-50);
+    
+    /* Card - Surface colors for content containers */
+    --card: var(--neutral-900);
+    --card-foreground: var(--neutral-50);
+    
+    /* Popover - Dropdown, modal backgrounds */
+    --popover: var(--neutral-900);
+    --popover-foreground: var(--neutral-50);
+    
+    /* Primary Brand Colors - Slightly brighter for dark mode */
+    --primary: var(--primary-500);
+    --primary-foreground: var(--color-white);
+    
+    /* Secondary Colors */
+    --secondary: var(--neutral-800);
+    --secondary-foreground: var(--neutral-50);
+    
+    /* Muted - Subtle text, borders, backgrounds */
+    --muted: var(--neutral-800);
+    --muted-foreground: var(--neutral-400);
+    
+    /* Accent - Interactive states, highlights */
+    --accent: var(--neutral-800);
+    --accent-foreground: var(--neutral-50);
+    
+    /* Destructive - Errors, danger actions */
+    --destructive: var(--danger-600);
+    --destructive-foreground: var(--color-white);
+    
+    /* Border & Input */
+    --border: var(--neutral-800);
+    --input: var(--neutral-800);
+    --ring: var(--primary-500);
 
-    /* Sidebar */
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 0 0% 98%;
-    --sidebar-primary-foreground: 240 5.9% 10%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Sidebar specific - Dark */
+    --sidebar-background: var(--neutral-900);
+    --sidebar-foreground: var(--neutral-200);
+    --sidebar-primary: var(--primary-500);
+    --sidebar-primary-foreground: var(--color-white);
+    --sidebar-accent: var(--neutral-800);
+    --sidebar-accent-foreground: var(--neutral-50);
+    --sidebar-border: var(--neutral-800);
+    --sidebar-ring: var(--primary-500);
+
+    /* Shadow adjustments for dark mode */
+    --shadow-xs: 0 1px 2px 0 hsl(var(--neutral-950) / 0.3);
+    --shadow-sm: 0 1px 3px 0 hsl(var(--neutral-950) / 0.4), 0 1px 2px -1px hsl(var(--neutral-950) / 0.4);
+    --shadow-md: 0 4px 6px -1px hsl(var(--neutral-950) / 0.4), 0 2px 4px -2px hsl(var(--neutral-950) / 0.4);
+    --shadow-lg: 0 10px 15px -3px hsl(var(--neutral-950) / 0.4), 0 4px 6px -4px hsl(var(--neutral-950) / 0.4);
+    --shadow-xl: 0 20px 25px -5px hsl(var(--neutral-950) / 0.4), 0 8px 10px -6px hsl(var(--neutral-950) / 0.4);
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
+  /* ==========================================================================
+     BASE STYLES - Reset and normalization
+     ========================================================================== */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
   }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
   body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    margin: 0;
+    padding: 0;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+  }
+
+  /* ==========================================================================
+     TYPOGRAPHY BASE STYLES
+     ========================================================================== */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: var(--font-semibold);
+    line-height: var(--leading-tight);
+    color: hsl(var(--foreground));
+  }
+
+  h1 { font-size: var(--text-4xl); }
+  h2 { font-size: var(--text-3xl); }
+  h3 { font-size: var(--text-2xl); }
+  h4 { font-size: var(--text-xl); }
+  h5 { font-size: var(--text-lg); }
+  h6 { font-size: var(--text-base); }
+
+  p {
+    margin: 0 0 var(--space-4);
+    line-height: var(--leading-relaxed);
+  }
+
+  a {
+    color: hsl(var(--primary));
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  a:hover {
+    color: hsl(var(--primary-700));
+  }
+
+  /* ==========================================================================
+     BORDER & FOCUS STYLES
+     ========================================================================== */
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  /* ==========================================================================
+     SELECTION & SCROLLBAR
+     ========================================================================== */
+  ::selection {
+    background-color: hsl(var(--primary-200));
+    color: hsl(var(--primary-900));
+  }
+
+  /* Custom scrollbar - Webkit */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: var(--radius-full);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground));
+    border-radius: var(--radius-full);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--neutral-500));
+  }
+}
+
+@layer components {
+  /* ==========================================================================
+     COMPONENT CLASSES - Reusable patterns
+     ========================================================================== */
+
+  /* Card Base */
+  .card {
+    background-color: hsl(var(--card));
+    border-radius: var(--radius-lg);
+    border: 1px solid hsl(var(--border));
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition-normal);
+  }
+
+  .card:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Button Base */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .btn:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  /* Input Base */
+  .input {
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius-md);
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .input:focus {
+    outline: none;
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+  }
+
+  /* Badge Base */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    border-radius: var(--radius-full);
+  }
+
+  /* ==========================================================================
+     UTILITY CLASSES - Common patterns
+     ========================================================================== */
+
+  /* Flex centering */
+  .flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Text truncation */
+  .truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Animation: Fade In */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn var(--transition-normal);
+  }
+
+  /* Animation: Slide Up */
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slideUp var(--transition-spring);
+  }
+
+  /* Animation: Pulse */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}
+
+@layer utilities {
+  /* ==========================================================================
+     UTILITY CLASSES - Tailwind extensions
+     ========================================================================== */
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Glass effect */
+  .glass {
+    background: hsl(var(--background) / 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* Gradient text */
+  .text-gradient {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-700)) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }

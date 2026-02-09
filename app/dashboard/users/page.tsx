@@ -106,6 +106,9 @@ export default function UsersPage() {
       <Alert variant="destructive" className="my-4">
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>Error loading user data. Please try again later.</AlertDescription>
+        <div className="mt-2 text-xs">
+          Error: {error ? JSON.stringify(error) : 'Unknown error'}
+        </div>
       </Alert>
     )
   }
